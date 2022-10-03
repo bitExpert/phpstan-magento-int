@@ -1,0 +1,60 @@
+#!/bin/bash
+set -o errexit
+
+# shellcheck source=../env/db.env
+source env/db.env
+# shellcheck source=../env/magento.env
+source env/magento.env
+
+DOMAIN=${1:-magento.test}
+
+bin/stop
+
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+[ $? != 0 ] && echo "Failed to start Docker services" && exit
+
+echo "Install Composer dependencies..."
+bin/clinotty composer install
+
+echo "Magento Install..."
+bin/clinotty bin/magento setup:install \
+  --db-host="$MYSQL_HOST" \
+  --db-name="$MYSQL_DATABASE" \
+  --db-user="$MYSQL_USER" \
+  --db-password="$MYSQL_PASSWORD" \
+  --cleanup-database \
+  --base-url=https://"$DOMAIN"/ \
+  --base-url-secure=https://"$DOMAIN"/ \
+  --backend-frontname="$MAGENTO_ADMIN_FRONTNAME" \
+  --admin-firstname="$MAGENTO_ADMIN_FIRST_NAME" \
+  --admin-lastname="$MAGENTO_ADMIN_LAST_NAME" \
+  --admin-email="$MAGENTO_ADMIN_EMAIL" \
+  --admin-user="$MAGENTO_ADMIN_USER" \
+  --admin-password="$MAGENTO_ADMIN_PASSWORD" \
+  --language="$MAGENTO_LOCALE" \
+  --currency="$MAGENTO_CURRENCY" \
+  --timezone="$MAGENTO_TIMEZONE" \
+  --disable-modules=Magento_Elasticsearch7,Magento_Elasticsearch6,Magento_Elasticsearch \
+  --use-rewrites=1 \
+  --no-interaction
+
+echo "Enable legacy MySQL search..."
+bin/clinotty bin/magento config:set catalog/search/engine 'lmysql'
+
+echo "Forcing deploy of static content to speed up initial requests..."
+bin/clinotty bin/magento setup:static-content:deploy -f
+
+echo "Re-indexing..."
+bin/clinotty bin/magento indexer:reindex
+
+echo "Setting basic URL and generating SSL certificate..."
+bin/setup-domain "${DOMAIN}"
+
+echo "Clearing the cache to apply updates..."
+bin/clinotty bin/magento cache:flush
+
+echo "Turning on developer mode..."
+bin/clinotty bin/magento deploy:mode:set developer
+
+echo "Docker development environment setup complete."
+echo "You may now access your Magento instance at https://${DOMAIN}/"

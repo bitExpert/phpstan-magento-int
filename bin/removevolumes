@@ -1,0 +1,9 @@
+#!/bin/bash
+DIR="${BASH_SOURCE%/*}"
+if [[ ! -d "$DIR" ]]; then DIR="$PWD"; fi
+source "$DIR/../.env"
+
+docker volume rm ${COMPOSE_PROJECT_NAME}_dbdata
+docker volume rm ${COMPOSE_PROJECT_NAME}_sockdata
+docker volume rm ${COMPOSE_PROJECT_NAME}_ssldata
+
