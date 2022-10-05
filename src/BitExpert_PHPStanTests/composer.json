@@ -1,0 +1,31 @@
+{
+  "name": "bitexpert/phpstan-magento-int-module",
+  "description": "Integration tests for bitexpert/phpstan-magento",
+  "license": "Apache-2.0",
+  "require": {
+    "php": "~8.1.0",
+    "magento/framework": "~103.0.5"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://repo-magento-mirror.fooman.co.nz"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "BitExpert\\PHPStanTests\\": ""
+    }
+  },
+  "config": {
+    "allow-plugins": {
+      "magento/composer-dependency-version-audit-plugin": true,
+      "phpstan/extension-installer": true
+    }
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^1.8",
+    "phpstan/extension-installer": "^1.1",
+    "bitexpert/phpstan-magento": "dev-master"
+  }
+}
