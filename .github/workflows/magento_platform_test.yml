@@ -1,0 +1,73 @@
+---
+name: Magento Platform Test
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  phpstan:
+    name: PHPStan Magento Integration Test
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
+        options: --tmpfs /tmp:rw --tmpfs /var/lib/mysql:rw --health-cmd="mysqladmin ping"
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          tools: composer:2.4.2
+          php-version: 8.1
+          extensions: mbstring, intl
+          coverage: none
+
+      - name: Copy PHPStanTests module to app/code
+        working-directory: ./magento
+        run: |
+          mkdir -p app/code/BitExpert
+          cp -r ../src/BitExpert_PHPStanTests/ app/code/PHPStanTests
+
+      - name: Install Magento platform
+        working-directory: ./magento
+        run: |
+          mysqladmin -h127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -uroot -proot create magento; 
+          composer install --no-interaction;
+          bin/magento setup:install \
+            --db-host="127.0.0.1:${{ job.services.mysql.ports[3306] }}" \
+            --db-user=root \
+            --db-password=root \
+            --db-name=magento \
+            --cleanup-database \
+            --session-save=db \
+            --backend-frontname=admin \
+            --timezone="Europe/Berlin" \
+            --currency="EUR" \
+            --base-url="http://github.phpstan-magento.test/" \
+            --use-rewrites=1 \
+            --use-secure=1 \
+            --use-secure-admin=1 \
+            --admin-user=admin \
+            --admin-password=Password123 \
+            --admin-firstname=Armin \
+            --admin-lastname=Admin \
+            --admin-email="admin@example.com" \
+            --disable-modules=Magento_Elasticsearch7,Magento_Elasticsearch6,Magento_Elasticsearch \
+            --use-rewrites=1 \
+            --no-interaction
+
+      - name: Run PHPStan against app/code
+        working-directory: ./magento
+        run:
+          bin/magento setup:di:compile;
+          ./vendor/bin/phpstan analyse --level 1 app/code

@@ -1,0 +1,30 @@
+---
+name: Magento Module Test
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  phpstan:
+    name: PHPStan Magento Integration Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          tools: composer:2.4.2
+          php-version: 8.1
+          extensions: mbstring, intl
+          coverage: none
+
+      - name: Run PHPStan
+        working-directory: ./magento
+        run:
+          composer install --no-interaction;
+          ./vendor/bin/phpstan analyse --level 1 .
