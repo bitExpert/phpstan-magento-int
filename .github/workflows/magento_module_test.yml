@@ -30,6 +30,11 @@ jobs:
         run:
           composer install --no-interaction;
 
+      - name: PHPStan version
+        working-directory: ./src/BitExpert_PHPStanTests
+        run:
+          ./vendor/bin/phpstan --version
+
       - name: Run PHPStan
         working-directory: ./src/BitExpert_PHPStanTests
         run:

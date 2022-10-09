@@ -45,6 +45,11 @@ jobs:
         run:
           composer install --no-interaction;
 
+      - name: PHPStan version
+        working-directory: ./magento
+        run:
+          ./vendor/bin/phpstan --version
+
       - name: Install Magento platform
         working-directory: ./magento
         run: |
