@@ -1,0 +1,3 @@
+includes:
+	- app/code/BitExpert/PHPStanTests/phpstan.neon
+

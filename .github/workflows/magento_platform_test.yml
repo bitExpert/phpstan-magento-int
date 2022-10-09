@@ -38,7 +38,7 @@ jobs:
         working-directory: ./magento
         run: |
           mkdir -p app/code/BitExpert
-          cp -r ../src/BitExpert_PHPStanTests/ app/code/PHPStanTests
+          cp -r ../src/BitExpert_PHPStanTests/ app/code/BitExpert/PHPStanTests
 
       - name: Install Composer dependencies
         working-directory: ./magento
@@ -76,4 +76,4 @@ jobs:
         working-directory: ./magento
         run: |
           bin/magento setup:di:compile;
-          ./vendor/bin/phpstan analyse --level 1 app/code
+          ./vendor/bin/phpstan analyse

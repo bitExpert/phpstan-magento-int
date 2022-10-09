@@ -33,4 +33,4 @@ jobs:
       - name: Run PHPStan
         working-directory: ./src/BitExpert_PHPStanTests
         run:
-          ./vendor/bin/phpstan analyse --level 1 .
+          ./vendor/bin/phpstan analyse
