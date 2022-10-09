@@ -40,11 +40,15 @@ jobs:
           mkdir -p app/code/BitExpert
           cp -r ../src/BitExpert_PHPStanTests/ app/code/PHPStanTests
 
+      - name: Install Composer dependencies
+        working-directory: ./magento
+        run:
+          composer install --no-interaction;
+
       - name: Install Magento platform
         working-directory: ./magento
         run: |
           mysqladmin -h127.0.0.1 -P ${{ job.services.mysql.ports[3306] }} -uroot -proot create magento; 
-          composer install --no-interaction;
           bin/magento setup:install \
             --db-host="127.0.0.1:${{ job.services.mysql.ports[3306] }}" \
             --db-user=root \
@@ -70,6 +74,6 @@ jobs:
 
       - name: Run PHPStan against app/code
         working-directory: ./magento
-        run:
+        run: |
           bin/magento setup:di:compile;
           ./vendor/bin/phpstan analyse --level 1 app/code

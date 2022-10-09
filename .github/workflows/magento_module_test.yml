@@ -25,8 +25,12 @@ jobs:
           extensions: mbstring, intl
           coverage: none
 
-      - name: Run PHPStan
-        working-directory: ./magento
+      - name: Install Composer dependencies
+        working-directory: ./src/BitExpert_PHPStanTests
         run:
           composer install --no-interaction;
+
+      - name: Run PHPStan
+        working-directory: ./src/BitExpert_PHPStanTests
+        run:
           ./vendor/bin/phpstan analyse --level 1 .
