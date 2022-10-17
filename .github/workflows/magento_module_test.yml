@@ -39,3 +39,8 @@ jobs:
         working-directory: ./src/BitExpert_PHPStanTests
         run:
           ./vendor/bin/phpstan analyse
+
+      - name: Run PHPStan (Bleeding Edge)
+        working-directory: ./src/BitExpert_PHPStanTests
+        run:
+          ./vendor/bin/phpstan analyse -c bleedingEdge.neon

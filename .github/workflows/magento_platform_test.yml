@@ -75,10 +75,15 @@ jobs:
             --admin-email="admin@example.com" \
             --disable-modules=Magento_Elasticsearch7,Magento_Elasticsearch6,Magento_Elasticsearch \
             --use-rewrites=1 \
-            --no-interaction
+            --no-interaction;
+          bin/magento setup:di:compile;
 
       - name: Run PHPStan against app/code
         working-directory: ./magento
-        run: |
-          bin/magento setup:di:compile;
+        run:
           ./vendor/bin/phpstan analyse
+
+      - name: Run PHPStan (Bleeding Edge) against app/code
+        working-directory: ./magento
+        run:
+          ./vendor/bin/phpstan analyse -c bleedingEdge.neon
