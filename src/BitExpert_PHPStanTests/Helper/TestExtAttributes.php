@@ -10,10 +10,15 @@ namespace BitExpert\PHPStanTests\Helper;
 class TestExtAttributes
 {
     public function __construct(
-        \Magento\Catalog\Api\Data\ProductExtension $productExt,
-        \Magento\InventoryApi\Api\Data\StockExtension $stockExt
+        \Magento\Catalog\Api\Data\ProductInterface $product,
+        \Magento\InventoryApi\Api\Data\StockInterface $stock
     )
     {
+        /** @var \Magento\Catalog\Api\Data\ProductExtensionInterface $productExt */
+        $productExt = $product->getExtensionAttributes();
+        /** @var \Magento\InventoryApi\Api\Data\StockExtensionInterface $stockExt */
+        $stockExt = $stock->getExtensionAttributes();
+
         // access extension attributes defined in extension_attributes.xml in the module
         $productExt->setAdditionalName('Additional name');
         $name = $productExt->getAdditionalName();
