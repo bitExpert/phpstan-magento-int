@@ -83,11 +83,13 @@
     "repositories": {
         "swissup": {
             "type": "composer",
-            "url": "https://docs.swissuplabs.com/packages/"
+            "url": "https://docs.swissuplabs.com/packages/",
+            "canonical": false
         },
         "magento-mirror": {
             "type": "composer",
-            "url": "https://repo-magento-mirror.fooman.co.nz"
+            "url": "https://repo-magento-mirror.fooman.co.nz",
+            "canonical": false
         }
     },
     "extra": {
