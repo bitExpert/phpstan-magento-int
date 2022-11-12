@@ -24,8 +24,7 @@
         "magento/module-catalog": "^104.0",
         "magento/module-inventory-api": "^1.2",
         "magento/product-community-edition": "2.4.5",
-        "swissup/module-search-mysql-legacy": "^1.1",
-        "yireo/magento2-replace-all": "^4.2"
+        "swissup/module-search-mysql-legacy": "^1.1"
     },
     "autoload": {
         "exclude-from-classmap": [
